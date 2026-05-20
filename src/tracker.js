@@ -56,6 +56,9 @@ export class CostTracker {
       if (Array.isArray(data.entries)) {
         this.entries = data.entries;
       }
+      if (data.budgetConfig) {
+        this.budgetConfig = data.budgetConfig;
+      }
     } catch (err) {
       if (err.code !== 'ENOENT') {
         console.warn(`Warning: Could not load cost data from ${this.storagePath}: ${err.message}`);
@@ -77,6 +80,7 @@ export class CostTracker {
         version: 1,
         updatedAt: new Date().toISOString(),
         entries: this.entries,
+        budgetConfig: this.budgetConfig || null,
       };
       writeFileSync(this.storagePath, JSON.stringify(data, null, 2), 'utf8');
     } catch (err) {

@@ -15,9 +15,11 @@ export class BudgetManager {
    */
   constructor(tracker, options = {}) {
     this.tracker = tracker;
-    this.amount = options.amount || 0;
-    this.period = options.period || 'monthly';
     this.alertThreshold = options.alertThreshold || 0.8;
+    // Load persisted budget config if available
+    const persisted = tracker.budgetConfig;
+    this.amount = options.amount || persisted?.amount || 0;
+    this.period = options.period || persisted?.period || 'monthly';
   }
 
   /**
@@ -30,6 +32,11 @@ export class BudgetManager {
   setBudget(amount, period = 'monthly') {
     this.amount = amount;
     this.period = period;
+    // Persist budget config to the data file
+    if (this.tracker) {
+      this.tracker.budgetConfig = { amount, period };
+      this.tracker._save();
+    }
     return {
       amount: this.amount,
       period: this.period,
