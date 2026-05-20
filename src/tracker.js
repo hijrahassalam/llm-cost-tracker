@@ -4,7 +4,7 @@
  * Core data layer: logs entries, persists to JSON, supports querying and aggregation.
  */
 
-import { readFile, writeFile, mkdir } from 'node:fs/promises';
+import { readFile, writeFile, mkdir, readFileSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { dirname } from 'node:path';
 import { createHash } from 'node:crypto';
 import { calculateCost } from './pricing.js';
@@ -28,7 +28,10 @@ export class CostTracker {
     this.entries = [];
     this.storagePath = options.storagePath || null;
     this._logListeners = [];
-    this._loaded = false;
+    // Load existing data synchronously on construction
+    if (this.storagePath) {
+      this._loadSync();
+    }
   }
 
   /**
@@ -43,12 +46,12 @@ export class CostTracker {
 
   /**
    * Load entries from the JSON storage file (if it exists).
-   * Called lazily on first access.
+   * Called synchronously on construction.
    */
-  async _load() {
-    if (this._loaded || !this.storagePath) return;
+  _loadSync() {
     try {
-      const raw = await readFile(this.storagePath, 'utf8');
+      if (!existsSync(this.storagePath)) return;
+      const raw = readFileSync(this.storagePath, 'utf8');
       const data = JSON.parse(raw);
       if (Array.isArray(data.entries)) {
         this.entries = data.entries;
@@ -57,24 +60,25 @@ export class CostTracker {
       if (err.code !== 'ENOENT') {
         console.warn(`Warning: Could not load cost data from ${this.storagePath}: ${err.message}`);
       }
-      // ENOENT is fine — first run, no data yet
     }
-    this._loaded = true;
   }
 
   /**
    * Persist current entries to the JSON storage file.
    */
-  async _save() {
+  _save() {
     if (!this.storagePath) return;
     try {
-      await mkdir(dirname(this.storagePath), { recursive: true });
+      const dir = dirname(this.storagePath);
+      if (!existsSync(dir)) {
+        mkdirSync(dir, { recursive: true });
+      }
       const data = {
         version: 1,
         updatedAt: new Date().toISOString(),
         entries: this.entries,
       };
-      await writeFile(this.storagePath, JSON.stringify(data, null, 2), 'utf8');
+      writeFileSync(this.storagePath, JSON.stringify(data, null, 2), 'utf8');
     } catch (err) {
       console.warn(`Warning: Could not save cost data to ${this.storagePath}: ${err.message}`);
     }
@@ -135,8 +139,8 @@ export class CostTracker {
       try { fn(logged); } catch { /* listener errors are non-fatal */ }
     }
 
-    // Persist asynchronously (fire-and-forget to keep log() synchronous)
-    this._save().catch(() => {});
+    // Persist to disk
+    this._save();
 
     return logged;
   }
@@ -249,6 +253,6 @@ export class CostTracker {
    */
   clear() {
     this.entries = [];
-    this._save().catch(() => {});
+    this._save();
   }
 }
