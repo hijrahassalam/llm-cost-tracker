@@ -1,0 +1,48 @@
+{
+  "name": "llm-cost-tracker",
+  "version": "1.0.0",
+  "description": "Track, analyze, and optimize LLM API costs across multiple providers",
+  "type": "module",
+  "main": "src/index.js",
+  "exports": {
+    ".": "./src/index.js",
+    "./pricing": "./src/pricing.js",
+    "./tracker": "./src/tracker.js",
+    "./analyzer": "./src/analyzer.js",
+    "./optimizer": "./src/optimizer.js",
+    "./budget": "./src/budget.js",
+    "./middleware": "./src/middleware.js"
+  },
+  "bin": {
+    "llm-cost": "./cli/index.js"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "cli": "node cli/index.js"
+  },
+  "keywords": [
+    "llm",
+    "cost",
+    "token",
+    "tracking",
+    "optimization",
+    "openai",
+    "api",
+    "budget",
+    "xiaomi",
+    "deepseek",
+    "anthropic",
+    "openrouter"
+  ],
+  "author": "Hijrah Assalam",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "files": [
+    "src/",
+    "cli/",
+    "README.md",
+    "LICENSE"
+  ]
+}

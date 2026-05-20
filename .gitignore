@@ -1,0 +1,7 @@
+node_modules/
+.env
+.env.*
+cost-data.json
+*-costs.json
+*.log
+.DS_Store
