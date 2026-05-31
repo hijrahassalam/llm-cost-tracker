@@ -227,17 +227,18 @@ export class CostTracker {
    */
   export(format = 'json') {
     if (format === 'csv') {
-      if (this.entries.length === 0) return 'timestamp,provider,model,inputTokens,outputTokens,totalTokens,cost,promptHash\n';
-      const headers = Object.keys(this.entries[0]).join(',');
+      const cols = ['timestamp', 'provider', 'model', 'inputTokens', 'outputTokens', 'totalTokens', 'cost', 'promptHash'];
+      const header = cols.join(',');
+      if (this.entries.length === 0) return header + '\n';
       const rows = this.entries.map(e =>
-        Object.values(e).map(v => {
+        cols.map(c => {
+          const v = e[c];
           if (v === null || v === undefined) return '';
-          if (typeof v === 'object') return `"${JSON.stringify(v).replace(/"/g, '""')}"`;
           if (typeof v === 'string' && v.includes(',')) return `"${v}"`;
           return String(v);
         }).join(',')
       );
-      return [headers, ...rows].join('\n');
+      return [header, ...rows].join('\n');
     }
 
     return JSON.stringify({ entries: this.entries, exportedAt: new Date().toISOString() }, null, 2);
