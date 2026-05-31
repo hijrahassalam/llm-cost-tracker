@@ -66,6 +66,7 @@ const { values, positionals } = parseArgs({
     set: { type: 'string' },
     format: { type: 'string', short: 'f' },
     storage: { type: 'string', short: 's' },
+    json: { type: 'boolean', short: 'j' },
     help: { type: 'boolean', short: 'h' },
   },
   allowPositionals: true,
@@ -154,6 +155,11 @@ async function cmdLog() {
 async function cmdStats() {
   const period = values.period || 'all';
   const stats = tracker.getStats(period);
+
+  if (values.json) {
+    console.log(JSON.stringify(stats, null, 2));
+    return;
+  }
 
   console.log(`📊 Cost Statistics (${period})`);
   console.log('─'.repeat(40));
@@ -322,6 +328,7 @@ OPTIONS:
   --set             Set budget amount in USD
   -f, --format      Export format: json, csv (default: json)
   -s, --storage     Path to cost data file (default: ./cost-data.json)
+  -j, --json        Output as JSON (for stats command)
   -h, --help        Show this help
 
 EXAMPLES:
