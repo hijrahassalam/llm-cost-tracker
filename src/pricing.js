@@ -76,6 +76,15 @@ export const PROVIDERS = {
       'claude-3-5-sonnet-20241022': { input: 3.00, output: 15.00 },
     },
   },
+  google: {
+    name: 'Google Gemini',
+    models: {
+      'gemini-2.5-pro': { input: 1.25, output: 10.00, description: 'Thinking model — strong reasoning, complex tasks' },
+      'gemini-2.5-flash': { input: 0.15, output: 0.60, description: 'Fast, cost-effective, good for most tasks' },
+      'gemini-2.0-flash': { input: 0.10, output: 0.40, description: 'Previous gen, still widely used' },
+      'gemini-2.0-flash-lite': { input: 0.075, output: 0.30, description: 'Lightest, cheapest Gemini model' },
+    },
+  },
 };
 
 // ─── Thinking / non-thinking model pairs ──────────────────────────────────────
@@ -86,6 +95,7 @@ export const THINKING_MODEL_PAIRS = [
   { thinking: 'o1', nonThinking: 'gpt-4o', provider: 'openai' },
   { thinking: 'o1-mini', nonThinking: 'gpt-4o-mini', provider: 'openai' },
   { thinking: 'o3-mini', nonThinking: 'gpt-4o-mini', provider: 'openai' },
+  { thinking: 'gemini-2.5-pro', nonThinking: 'gemini-2.5-flash', provider: 'google' },
 ];
 
 // Mutable custom pricing overrides (applied via updatePricing)
