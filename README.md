@@ -278,6 +278,44 @@ Repeated prompts are common in production (RAG systems, chatbots, agent loops). 
 
 ---
 
+## 📖 API Reference
+
+### `createCostTracker(options)`
+
+Creates a tracker instance.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `storagePath` | `string` | `./cost-data.json` | Path to persist cost data |
+| `budget` | `object` | `null` | `{ amount, period }` — budget limit |
+| `alertThreshold` | `number` | `0.8` | Alert when spend reaches this fraction |
+
+### Tracker Methods
+
+| Method | Returns | Description |
+|--------|---------|-------------|
+| `log(entry)` | `Object` | Log an LLM API call. Requires `provider`, `model`. Optional: `inputTokens`, `outputTokens`, `cost`, `prompt`, `metadata` |
+| `getStats(period)` | `Object` | Cost statistics for period (`24h`, `7d`, `30d`, `all`) |
+| `getCostByModel()` | `Array` | Cost breakdown grouped by model |
+| `getCostByProvider()` | `Array` | Cost breakdown grouped by provider |
+| `getExpensivePrompts(n)` | `Array` | Top N most expensive prompts |
+| `getTrend(days)` | `Array` | Daily cost trend |
+| `detectAnomalies()` | `Array` | Cost anomalies (z-score > 2) |
+| `suggestSavings()` | `Array` | Optimization suggestions |
+| `export(format)` | `string` | Export as `json` or `csv` |
+| `clear()` | `void` | Delete all tracked data |
+
+### Static Functions
+
+| Function | Description |
+|----------|-------------|
+| `getProviderPricing(provider, model)` | Look up pricing for a model |
+| `calculateCost(provider, model, in, out)` | Calculate cost for a call |
+| `updatePricing(provider, models)` | Add custom pricing overrides |
+| `getAllPricing()` | Get full pricing table |
+
+---
+
 ## 📄 License
 
 MIT — [Hijrah Assalam](LICENSE)
